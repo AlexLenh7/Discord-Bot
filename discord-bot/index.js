@@ -19,6 +19,7 @@ const client = new Client({
 
 client.commands = new Collection();
 
+// load all commands into bot
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -37,10 +38,10 @@ for (const folder of commandFolders) {
 	}
 }
 
+// Start listening to events in events folder
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-// execute all events once
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
 	const event = require(filePath);
