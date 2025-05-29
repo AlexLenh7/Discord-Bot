@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder/* , EmbedBuilder */ } = require('discord.js');
 
 module.exports = 
 {
@@ -24,6 +24,11 @@ module.exports =
 
     async execute(interaction)
     {
+        // const caseGif = new EmbedBuilder()
+        //     .setImage('https://i.makeagif.com/media/7-02-2019/ewHSwm.gif')
+        //     .setColor(0x00AE86);
+            
+        // await channel.send({ embeds: [caseGif] });
         // cs case probabilities
         const cs2Prob = [
             { name: '💛',  chance: 0.26 },
@@ -60,20 +65,30 @@ module.exports =
         }
 
         // cs2 gambling lol
-        if (interaction.options.getSubcommand() === 'gamble')
+        try 
         {
-            const caseAmt = interaction.options.getInteger('amount-of-cases');
-            const results = [];
-            for (let i = 0; i < caseAmt; i++)
-            {
-                results.push(caseProbability());
+            if (interaction.options.getSubcommand() === 'gamble')
+            {     
+                // await interaction.channel.send({ embeds: [caseGif] }); 
+                const caseAmt = interaction.options.getInteger('amount-of-cases');
+                const results = [];
+                for (let i = 0; i < caseAmt; i++)
+                {
+                    results.push(caseProbability());
+                }
+                await interaction.deferReply();
+                await interaction.editReply(`You opened ${caseAmt} case(s) and got:\n **${results.join('** **')}**`);
             }
-            await interaction.reply(`You opened ${caseAmt} case(s) and got:\n **${results.join('** **')}**`);
-        }
-        // simple coin flip
-        else if (interaction.options.getSubcommand() === 'coinflip')
+            // simple coin flip
+            else if (interaction.options.getSubcommand() === 'coinflip')
+            {
+                await interaction.reply(fiftyFifty());
+            }
+        } 
+        catch (error) 
         {
-            await interaction.reply(fiftyFifty());
+            console.error('Issue with luck: ', error);
+            await interaction.reply('There was a problem');
         }
     },
 };

@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const { gemini } = require('../commands/utility/gemini.js');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -34,10 +35,40 @@ module.exports = {
             message.channel.id === birthChannel && 
             message.mentions.size > 0)
         {
+            const birthday = [
+                "Happy birth",
+                "Happy unc day",
+                "One year closer to your death :)",
+                "Damn you old as hell",
+            ];
+            const random = Math.floor(Math.random() * birthday.length);
             // grab the first instance of user being mentioned
             const userBirth = message.mentions.users.first();
             console.log(`There was a birthday for ${userBirth.tag}`);
-            await message.channel.send(`Happy Birthday ${userBirth.tag}!`);
+            await message.channel.send(`${userBirth.tag} ${birthday[random]} `);
+        }
+
+        // checks if user replies to bot message
+        if (message.reference)
+        {
+            const replied = await message.channel.messages.fetch(message.reference.messageId);
+
+            // check if message was sent by bot
+            if (replied.author.id === message.client.user.id)
+            {
+                console.log(`${message.author.tag} replied to bot`);
+                const aiReply = await gemini(`Respond in exactly one sentence with Gen Z humor — unhinged, ironic, and straight to the point. 
+                    No side tangents, no explanations. Just roast, relate, or react like a cursed TikTok comment using common popular emojis.  
+                    ${message.content}`);
+                await message.reply(aiReply);
+            }
+        }
+
+        // easter egg when someone sends 727
+        if (message.guild && message.content === '727')
+        {
+            console.log(`message: ${message.content}`);
+            await message.reply(`https://tenor.com/view/wysi-727-osu-gif-26190979`);
         }
     },
 };
