@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const { gemini } = require('../commands/utility/gemini.js');
+const { context } = require('../commands/utility/context');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -51,17 +52,25 @@ module.exports = {
         // checks if user replies to bot message
         if (message.reference)
         {
-            const replied = await message.channel.messages.fetch(message.reference.messageId);
+            // fetches the message being replied to 
+            const botReply = await message.channel.messages.fetch(message.reference.messageId);
+            const userReply = message.content;
+            
+            // prevent double responses if message is not sent by bot
+            if (botReply.author.id !== message.client.user.id) return;
+            const messages = await context(message.channel, 100);
 
-            // check if message was sent by bot
-            if (replied.author.id === message.client.user.id)
+            let prompt = 'Respond to the reply in a short paragraph and use context as needed.';
+
+            console.log(`${message.author.tag} replied to bot`);
+            if (messages)
             {
-                console.log(`${message.author.tag} replied to bot`);
-                const aiReply = await gemini(`Respond in exactly one sentence with Gen Z humor — unhinged, ironic, and straight to the point. 
-                    No side tangents, no explanations. Just roast, relate, or react like a cursed TikTok comment using common popular emojis.  
-                    ${message.content}`);
-                await message.reply(aiReply);
+                prompt += `\nContext:\n${messages}`;
             }
+            prompt += `\nUser Replied:\n${userReply}`;
+            
+            const aiReply = await gemini(prompt);
+            await message.reply(aiReply);
         }
 
         // easter egg when someone sends 727

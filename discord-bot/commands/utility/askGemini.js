@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { gemini } = require('./gemini.js');
+const { context } = require('./context');
 
 module.exports = 
 {
@@ -28,7 +29,6 @@ module.exports =
                     .setDescription('The channel you want to summarize from')
                     .setRequired(false)))
 
-
         // ask gemini a question takes in a string 
         .addSubcommand(subCommand =>
             subCommand
@@ -55,19 +55,6 @@ module.exports =
 
             // always defer reply first thing
             await interaction.deferReply();
-
-            // function to call context if needed
-            async function context(channel, numMessages)
-            {
-                const fetchMessages = await channel.messages.fetch({ numMessages });
-
-                const messages = [...fetchMessages.values()]
-                        .reverse()
-                        .map(msg => `${msg.author.username}: ${msg.content}`)
-                        .join('\n');
-
-                return messages;
-            }
 
             // try to ask a question
             // optional get context from history of messages

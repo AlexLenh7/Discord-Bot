@@ -88,7 +88,7 @@ module.exports =
         catch (error) 
         {
             console.error('Issue with luck: ', error);
-            await interaction.reply('There was a problem');
+            await interaction.reply('There was a problem...');
         }
     },
 };

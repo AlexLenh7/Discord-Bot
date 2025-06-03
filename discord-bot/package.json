@@ -10,6 +10,8 @@
   "description": "",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "discord.js": "^14.19.3"
+    "discord.js": "^14.19.3",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7"
   }
 }
