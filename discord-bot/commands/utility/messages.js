@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = 
 {
@@ -18,6 +18,11 @@ module.exports =
 
     async execute(interaction)
     {
+        /*
+        Get the message amount specified by the user to delete.
+        Fetch the messages in the current channel and loop through
+        each message to delete.
+        */
         try
         {
             const messageAmt = interaction.options.getInteger('amount-of-messages');
@@ -25,12 +30,12 @@ module.exports =
             history.forEach(message => {
                 message.delete();
             });
-            await interaction.reply(`Deleted ${messageAmt} messages.`);
+            await interaction.reply({ content: `Deleted ${messageAmt} messages.`, flags: MessageFlags.Ephemeral });
         }
         catch (error) 
         {
             console.error('Issue with deleting ', error);
-            await interaction.reply('There was a problem...');
+            await interaction.reply({ content: 'There was a problem deleting messages', flags: MessageFlags.Ephemeral });
         }
     },
 };

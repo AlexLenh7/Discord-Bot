@@ -26,7 +26,7 @@ module.exports = {
             console.log(`[Pinged] ${message.author.tag} mentioned you: ${message.content}`);
             console.log(`In channel: ${message.channel.name}`);
             console.log(`Time sent: ${message.createdAt.toDateString()}`);
-            await message.reply(`If Alex does not respond to this message then I probably saw it`);
+            await message.reply(`https://tenor.com/view/do-not-ping-staff-no-reason-discord-discord-rules-gif-17679038`);
         }
         
         // happy birthday messages
@@ -73,11 +73,23 @@ module.exports = {
             await message.reply(aiReply);
         }
 
-        // easter egg when someone sends 727
-        if (message.guild && message.content === '727')
+        /*
+        Easter eggs when someone sends a message in chat:
+        When someone sends 727
+        When someone sends hesitation
+        */ 
+        const sekiro = 'hesitation';
+        const osu = '727';
+        
+        if (message.guild && message.content.includes(osu))
         {
             console.log(`message: ${message.content}`);
             await message.reply(`https://tenor.com/view/wysi-727-osu-gif-26190979`);
+        }
+        if (message.guild && message.content.toLowerCase().includes(sekiro))
+        {
+            console.log(`message: ${message.content}`);
+            await message.reply(`"Hesitation is defeat"`);
         }
     },
 };

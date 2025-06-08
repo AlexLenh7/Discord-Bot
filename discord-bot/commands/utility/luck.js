@@ -1,10 +1,10 @@
-const { SlashCommandBuilder/* , EmbedBuilder */ } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = 
 {
     cooldown: 1,
     data: new SlashCommandBuilder()
-        .setName('lucky')
+        .setName('test-your-luck')
         .setDescription('Test your luck!')
         // subcommand for testing luck in cs2
         .addSubcommand(subcommand => 
@@ -20,7 +20,21 @@ module.exports =
         .addSubcommand(subcommand => 
             subcommand
                 .setName('coinflip')
-                .setDescription('50/50 chances')),
+                .setDescription('50/50 heads or tails?'))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('rng')
+                .setDescription('Generate a random number')
+                .addIntegerOption(option => 
+                    option.setName('first-number')
+                    .setDescription('First number you want')
+                    .setMinValue(1)
+                    .setRequired(true))
+                .addIntegerOption(option =>
+                    option.setName('second-number')
+                    .setDescription('Second number you want')
+                    .setMinValue(2)
+                    .setRequired(true))),
 
     async execute(interaction)
     {
@@ -64,6 +78,14 @@ module.exports =
             return 'Tails';
         }
 
+        // function for a rand num generator
+        // generate a random number between 0 and user input
+        function rng(firstNum, secondNum)
+        {
+            const rngNum = Math.random() * (secondNum - firstNum) + firstNum;
+            return rngNum;
+        }
+
         // cs2 gambling lol
         try 
         {
@@ -84,11 +106,19 @@ module.exports =
             {
                 await interaction.reply(fiftyFifty());
             }
+            // random num generator
+            else if (interaction.options.getSubcommand() === 'rng')
+            {
+                const firstNum = interaction.options.getInteger('first-number');
+                const secondNum = interaction.options.getInteger('second-number');
+                const result = Math.round(rng(firstNum, secondNum));
+                await interaction.reply(`Your number is: ${result}`);
+            }
         } 
         catch (error) 
         {
             console.error('Issue with luck: ', error);
-            await interaction.reply('There was a problem...');
+            await interaction.reply({ content: 'There was a problem with luck', flags: MessageFlags.Ephemeral });
         }
     },
 };
