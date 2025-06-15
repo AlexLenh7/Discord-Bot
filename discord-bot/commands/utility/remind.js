@@ -62,7 +62,8 @@ module.exports =
             // get the time between current and reminder
             const delay = reminderTime - Date.now();
 
-            if (delay <= 0) {
+            if (delay <= 0) 
+            {
                 return interaction.reply({ content: 'Reminder has already passed.', flags: MessageFlags.Ephemeral });
             }
 

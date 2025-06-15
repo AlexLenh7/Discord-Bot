@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { gemini } = require('./gemini.js');
 const { context } = require('./context');
 
@@ -91,7 +91,7 @@ module.exports =
             
         } catch (error) {
             console.error('Gemini Error:', error);
-            await interaction.reply('Something went wrong with Gemini');
+            await interaction.reply({ content: 'Something went wrong with Gemini', flags: MessageFlags.Ephemeral });
         }
     },
 };

@@ -15,5 +15,8 @@
     "discord.js": "^14.19.3",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
   }
 }

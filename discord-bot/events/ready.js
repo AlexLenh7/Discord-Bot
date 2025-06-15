@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const { sequelize } = require('../commands/utility/database');
+// const { reminder } = require('../../models/reminder');
 
 module.exports = {
 	name: Events.ClientReady,
