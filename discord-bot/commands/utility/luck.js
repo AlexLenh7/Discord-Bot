@@ -8,16 +8,16 @@ module.exports =
         .setDescription('Test your luck!')
         
         // subcommand for testing luck in cs2
-        .addSubcommand(subcommand => 
-            subcommand
-                .setName('gamble')
-                .setDescription('Open a case in cs2')
-                .addIntegerOption(option =>
-                    option.setName('amount-of-cases')
-                    .setDescription('Number of cases to open')
-                    .setMinValue(1)
-                    .setMaxValue(100)
-                    .setRequired(true)))
+        // .addSubcommand(subcommand => 
+        //     subcommand
+        //         .setName('gamble')
+        //         .setDescription('Open a case in cs2')
+        //         .addIntegerOption(option =>
+        //             option.setName('amount-of-cases')
+        //             .setDescription('Number of cases to open')
+        //             .setMinValue(1)
+        //             .setMaxValue(100)
+        //             .setRequired(true)))
 
         .addSubcommand(subcommand => 
             subcommand
@@ -46,29 +46,30 @@ module.exports =
         //     .setColor(0x00AE86);
             
         // await channel.send({ embeds: [caseGif] });
-        // cs case probabilities
-        const cs2Prob = [
-            { name: '💛',  chance: 0.26 },
-            { name: '❤️',    chance: 0.64 },
-            { name: '🩷',   chance: 3.2 },
-            { name: '💜', chance: 15.98 },
-            { name: '💙',   chance: 79.92 },
-        ];
 
-        // function to calculate probablility
-        function caseProbability()
-        {
-            const randomNumber = Math.random() * 100;
-            let chance = 0;
-            for (const outcome of cs2Prob)
-            {
-                chance += outcome.chance;
-                if (chance > randomNumber)
-                {
-                    return outcome.name;
-                }
-            }
-        }
+        // cs case probabilities
+        // const cs2Prob = [
+        //     { name: '💛',  chance: 0.26 },
+        //     { name: '❤️',    chance: 0.64 },
+        //     { name: '🩷',   chance: 3.2 },
+        //     { name: '💜', chance: 15.98 },
+        //     { name: '💙',   chance: 79.92 },
+        // ];
+
+        // // function to calculate probablility
+        // function caseProbability()
+        // {
+        //     const randomNumber = Math.random() * 100;
+        //     let chance = 0;
+        //     for (const outcome of cs2Prob)
+        //     {
+        //         chance += outcome.chance;
+        //         if (chance > randomNumber)
+        //         {
+        //             return outcome.name;
+        //         }
+        //     }
+        // }
         
         // function for coin flip
         function fiftyFifty()
