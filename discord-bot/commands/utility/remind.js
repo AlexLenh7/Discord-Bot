@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, EmbedBuilder } = require('discord.js');
 // const { dayjs } = require('dayjs');
 const chrono = require('chrono-node');
 const { reminder } = require('../../models/reminder');
@@ -9,27 +9,25 @@ module.exports =
         .setName('remind')
         .setDescription('Bot will send a dm at the specified time')
 
-        // remind user with message, 
-        .setName('remind')
-        .setDescription('Bot will send a dm at the specified time')
-        .addUserOption(option =>
-            option.setName('user')
-            .setDescription('person to remind')
-            .setRequired(true))
+            .addStringOption(option =>
+                option
+                .setName('message')
+                .setDescription('Message to remind')
+                .setRequired(true))
+                
+            // user dayjs to parse string time 
+            .addStringOption(option => 
+                option
+                .setName('time')
+                .setDescription('Date and time to send the reminder')
+                .setRequired(true))
+                
+            // remind user with message, 
+            .addUserOption(option =>
+                option.setName('user')
+                .setDescription('person to remind')
+                .setRequired(false)),
 
-        .addStringOption(option =>
-            option
-            .setName('message')
-            .setDescription('Message to remind')
-            .setRequired(true))
-        
-        // user dayjs to parse string time 
-        .addStringOption(option => 
-            option
-            .setName('time')
-            .setDescription('Date and time to send the reminder')
-            .setRequired(true)),
-    
     async execute(interaction)
     {
         try 
@@ -41,8 +39,14 @@ module.exports =
             const setTime = interaction.options.getString('time');
 
             // get the user
-            const remindUser = interaction.options.getUser('user');
-            
+            let remindUser = interaction.options.getUser('user');
+
+            // if user is empty set user to message sender
+            if (!remindUser)
+            {
+                remindUser = interaction.user;
+            }
+
             // parse the user input into a readable date object
             const reminderTime = chrono.parseDate(setTime);
 
@@ -53,38 +57,20 @@ module.exports =
             }
                 
             // create the entry in the database
-            const newReminder = await reminder.create({
+            await reminder.create({
                 userId: remindUser.id,
                 message: reminderMessage,
                 remindAt: reminderTime,
             });
-                
-            // get the time between current and reminder
-            const delay = reminderTime - Date.now();
 
-            if (delay <= 0) 
-            {
-                return interaction.reply({ content: 'Reminder has already passed.', flags: MessageFlags.Ephemeral });
-            }
+            const unixTimestamp = Math.floor(reminderTime.getTime() / 1000);
 
-            // set a timeout with the delay between now and reminder time
-            setTimeout(async () => {
-                try {
-                    // fetch the reminder from the database storing the userid
-                    const user = await interaction.client.users.fetch(newReminder.userId);
-
-                    await user.send(`Reminder from ${interaction.user}: ${newReminder.message}`);
-                    
-                    // destroy the reminder after sending it
-                    await newReminder.destroy();
-                
-                } catch (error) {  
-                    console.log('Failed to send reminder: ', error); 
-                }
-            }, delay);
-
+            const embed = new EmbedBuilder()
+                .setColor("Blue")
+                .setDescription(`Your reminder has been set for <t:${unixTimestamp}:F>.`);
+            
             // private reply with stored information
-            await interaction.reply({ content: `Reminder set for ${reminderTime}`, flags: MessageFlags.Ephemeral });
+            await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }
         catch (error)
         {

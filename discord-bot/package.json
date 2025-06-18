@@ -13,6 +13,7 @@
     "chrono-node": "^2.8.2",
     "dayjs": "^1.11.13",
     "discord.js": "^14.19.3",
+    "node-fetch": "^3.3.2",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
   },

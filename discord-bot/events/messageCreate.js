@@ -78,7 +78,7 @@ module.exports = {
         When someone sends 727
         When someone sends hesitation
         */ 
-        const sekiro = 'hesitation';
+        // const sekiro = 'hesitation';
         const osu = '727';
         
         if (message.guild && message.content.includes(osu))
@@ -86,10 +86,10 @@ module.exports = {
             console.log(`message: ${message.content}`);
             await message.reply(`https://tenor.com/view/wysi-727-osu-gif-26190979`);
         }
-        if (message.guild && message.content.toLowerCase().includes(sekiro))
-        {
-            console.log(`message: ${message.content}`);
-            await message.reply(`"Hesitation is defeat"`);
-        }
+        // if (message.guild && message.content.toLowerCase().includes(sekiro))
+        // {
+        //     console.log(`message: ${message.content}`);
+        //     await message.reply(`"Hesitation is defeat"`);
+        // }
     },
 };

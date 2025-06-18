@@ -3,6 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
 const { token } = require('./config.json');
+const { Op } = require('sequelize');
+const { reminder } = require('./models/reminder');
 
 // Create a new client instance
 // specifiy permissions 
@@ -51,6 +53,36 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
+
+setInterval(async () => { 
+	try {
+		const reminders = await reminder.findAll({
+			where: {
+				remindAt: {
+					[Op.lte]: new Date(), // Only fetch reminders that are due
+				},
+			},
+		});
+
+		if (!reminders.length) return;
+
+		for (const remind of reminders) {
+			try {
+				const user = await client.users.fetch(remind.userId);
+
+				await user.send({
+					content: `${user}, you asked me to remind you about: ${remind.message}`,
+				});
+
+				await remind.destroy();
+			} catch (error) {
+				console.error(`Failed to send reminder to ${remind.userId}:`, error);
+			}
+		}
+	} catch (error) {
+		console.error('Error checking reminders:', error);
+	}
+}, 5 * 1000);
 
 // Log in to Discord with your client's token
 client.login(token);

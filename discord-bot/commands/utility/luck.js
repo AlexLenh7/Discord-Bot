@@ -6,6 +6,7 @@ module.exports =
     data: new SlashCommandBuilder()
         .setName('test-your-luck')
         .setDescription('Test your luck!')
+        
         // subcommand for testing luck in cs2
         .addSubcommand(subcommand => 
             subcommand
@@ -17,10 +18,12 @@ module.exports =
                     .setMinValue(1)
                     .setMaxValue(100)
                     .setRequired(true)))
+
         .addSubcommand(subcommand => 
             subcommand
                 .setName('coinflip')
                 .setDescription('50/50 heads or tails?'))
+
         .addSubcommand(subcommand =>
             subcommand
                 .setName('rng')
