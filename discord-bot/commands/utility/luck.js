@@ -22,12 +22,12 @@ module.exports =
         .addSubcommand(subcommand => 
             subcommand
                 .setName('coinflip')
-                .setDescription('50/50 heads or tails?'))
+                .setDescription('Flip a coin, heads or tails?'))
 
         .addSubcommand(subcommand =>
             subcommand
                 .setName('rng')
-                .setDescription('Generate a random number')
+                .setDescription('Generate a random number between x and y inclusive')
                 .addIntegerOption(option => 
                     option.setName('first-number')
                     .setDescription('First number you want')

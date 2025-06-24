@@ -6,8 +6,8 @@ module.exports =
 {
     cooldown: 1,
     data: new SlashCommandBuilder()
-        .setName('askgemini')
-        .setDescription('Ask Google Gemini to help you')
+        .setName('ask-ai')
+        .setDescription('Ask AI to help you powered by Gemini')
 
         // ask gemini to summarize messages within a channel
         .addSubcommand(subCommand =>
@@ -66,7 +66,7 @@ module.exports =
                                 
                 const messages = await context(targetChannel, numMessages);
 
-                let prompt = `Answer in a short paragraph: ${question}`;
+                let prompt = `Answer in a short paragraph : ${question}`;
                 if (messages)
                 {
                     prompt += `\n\nContext:\n${messages}`;

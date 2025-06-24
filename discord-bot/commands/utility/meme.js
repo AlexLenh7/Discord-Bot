@@ -4,6 +4,18 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('meme')
         .setDescription('generate a random meme from reddit')
+        
+            .addStringOption(option =>
+                option
+                .setName('type')
+                .setDescription('search within a specific subreddit')
+                .addChoices(
+                    { name: 'Anime memes', value: 'Animemes' },
+                    { name: 'relatable memes', value: 'me_irl' },
+                    { name: 'dank memes', value: 'dankmemes' },
+                    { name: 'General memes', value: 'memes' },
+                )
+                .setRequired(false))
 
             .addStringOption(option =>
                 option
@@ -25,10 +37,11 @@ module.exports = {
             // callback function to filter posts for image
             const imagePosts = posts.filter((post) => {
                 const data = post.data;
-                const isImageorVideo = data.post_hint === "image" || data.post_hint === "hosted:video";
-                return isImageorVideo;
+                const isImage = data.post_hint === "image";
+                return isImage;
             });
 
+            // return null if no posts were found
             if (imagePosts.length === 0)
             {
                 console.log('No image posts found.');
@@ -37,12 +50,16 @@ module.exports = {
             else
             {
                 const randomPost = imagePosts[Math.floor(Math.random() * imagePosts.length)];
-                return randomPost.data.url;
+                return { url: randomPost.data.url, title: randomPost.data.title }; // returns an object
             }
         }
 
-        // if search is empty proceed with random meme
-        if (!interaction.options.getString('search'))
+        const search = interaction.options.getString('search');
+        const subreddit = interaction.options.getString('type');
+        let redditUrl = "";
+
+        // if search is empty and type of meme is empty proceed with random meme
+        if (!search && !subreddit)
         {
             // hold an array of subreddits to randomly pick
             const subreddits = [
@@ -52,51 +69,44 @@ module.exports = {
                 'me_irl',
             ];
 
-            // pick the random subreddit
+            // pick the random subreddit if no string option for is provided for subredit
             const rand = Math.floor(Math.random() * subreddits.length);
+            const randomSub = subreddits[rand];
 
-            const subreddit = subreddits[rand];
-
-            // grab posts from the last week
-            const redditUrl = `https://www.reddit.com/r/${subreddit}/top/.json?t=week&limit=100`;
-
-            try 
-            {
-                const img = await getImage(redditUrl);
-
-                const embed = new EmbedBuilder()
-                    .setColor("Blue")
-                    .setImage(img);
-
-                await interaction.reply({ embeds: [embed] });
-            } 
-            catch (error)
-            {
-                console.error('Issue with setting reminder ', error);
-                await interaction.reply({ content: 'There was a problem with meme', flags: MessageFlags.Ephemeral });
-            }
+            // grab a random posts from the last week
+            redditUrl = `https://www.reddit.com/r/${randomSub}/top/.json?t=week&limit=1000`;
         }
-        else
+        // search and subreddit
+        else if (search && subreddit)
         {
-            const search = interaction.options.getString('search');
+            redditUrl = `https://www.reddit.com/r/${subreddit}/search.json?q=${search}&sort=relevance&t=month&limit=1000`;
+        }
+        // search without subreddit
+        else if (search && !subreddit)
+        {
             const encodedQuery = encodeURIComponent(`${search} meme`);
-            const redditUrl = `https://www.reddit.com/search.json?q=${encodedQuery}&sort=relevance&t=month&limit=100`;
+            redditUrl = `https://www.reddit.com/search.json?q=${encodedQuery}&sort=relevance&t=month&limit=1000`;
+        }
+        // no search but just subreddit
+        else if (!search && subreddit)
+        {
+            redditUrl = `https://www.reddit.com/r/${subreddit}/top/.json?t=week&limit=1000`;
+        }
+        try
+        {
+            const img = await getImage(redditUrl);
             
-            try
-            {
-                const img = await getImage(redditUrl);
-                
-                const embed = new EmbedBuilder()
-                    .setColor("Blue")
-                    .setImage(img);
+            const embed = new EmbedBuilder()
+                .setColor("White")
+                .setImage(img.url)
+                .setTitle(img.title);
 
-                await interaction.reply({ embeds: [embed] });
-            } 
-            catch (error)
-            {
-                console.error('Issue with searching meme ', error);
-                await interaction.reply({ content: 'There was a problem with meme', flags: MessageFlags.Ephemeral });
-            }
+            await interaction.reply({ embeds: [embed] });
+        } 
+        catch (error)
+        {
+            console.error('Issue with searching meme ', error);
+            await interaction.reply({ content: 'There was a problem with meme', flags: MessageFlags.Ephemeral });
         }
     },
 };
