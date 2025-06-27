@@ -12,13 +12,11 @@ module.exports =
         // ask gemini to summarize messages within a channel
         .addSubcommand(subCommand =>
             subCommand
-                .setName('summarize')
-                .setDescription('Select a number of messages to summarize in a channel')
-                
+
                 // specify the amount of messages you want to summarize
                 .addIntegerOption(option => 
-                    option.setName('amount-of-messages')
-                    .setDescription('Number of messages for context')
+                    option.setName('summarize')
+                    .setDescription('Select a number of messages to summarize in a channel')
                     .setMinValue(1)
                     .setMaxValue(100)
                     .setRequired(true))
@@ -26,25 +24,23 @@ module.exports =
                 // specify which channel you want to summarize from
                 .addChannelOption(option =>
                     option.setName('channel')
-                    .setDescription('The channel you want to summarize from')
+                    .setDescription('Specify the channel you want to summarize from')
                     .setRequired(false)))
 
         // ask gemini a question takes in a string 
         .addSubcommand(subCommand =>
             subCommand
-                .setName('question')
-                .setDescription('Ask Google Gemini a question')
 
                 // specify the question to ask taken as a string
                 .addStringOption(option =>
-                    option.setName('question-to-ask')
+                    option.setName('question')
                     .setDescription('Ask Google Gemini a question')
                     .setRequired(true))
                 
                 // optional if you want to ask a question and need context
                 .addIntegerOption(option => 
-                    option.setName('amount-of-messages')
-                    .setDescription('Number of messages for context')
+                    option.setName('context')
+                    .setDescription('Number of messages to fetch for context')
                     .setMinValue(1)
                     .setMaxValue(100)
                     .setRequired(false))),

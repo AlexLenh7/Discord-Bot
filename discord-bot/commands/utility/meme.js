@@ -79,7 +79,7 @@ module.exports = {
         // search and subreddit
         else if (search && subreddit)
         {
-            redditUrl = `https://www.reddit.com/r/${subreddit}/search.json?q=${search}&sort=relevance&t=month&limit=1000`;
+            redditUrl = `https://www.reddit.com/r/${subreddit}/search.json?q=${search}&sort=top&t=month&limit=1000`;
         }
         // search without subreddit
         else if (search && !subreddit)
@@ -90,7 +90,7 @@ module.exports = {
         // no search but just subreddit
         else if (!search && subreddit)
         {
-            redditUrl = `https://www.reddit.com/r/${subreddit}/top/.json?t=week&limit=1000`;
+            redditUrl = `https://www.reddit.com/r/${subreddit}/top/.json?t=month&limit=1000`;
         }
         try
         {
