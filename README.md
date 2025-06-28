@@ -1,5 +1,5 @@
 # Discord-Bot
-A feature-rich custom Discord bot built with `discord.js`, integrating useful utilities, fun interactions, and AI-powered responses. This bot supports reminders, meme generation, probability simulations, message logging, birthday events, and more.
+A feature-rich custom Discord bot built with primarily `Node.js and Discord.js`, integrating useful utilities, fun interactions, and AI-powered responses. This bot supports reminders, meme generation, probability simulations, message logging, birthday events, and more.
 
 ## Commands
 
