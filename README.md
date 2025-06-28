@@ -53,10 +53,10 @@ Set reminders that DM you at the specified time.
 - When a user replies to the bot's own response, the bot will reply back powered by AI integration with dynamic context up to 100 messages.
 
 ## Packages Used
-| `discord.js`    | Core framework for bot interaction
-| `day.js`        | Lightweight time formatting
-| `sequelize`     | ORM for database handling
-| `sqlite3`       | Local storage of reminders, birthdays
-| `chrono-node`   | Natural language date parsing
-| `node-fetch`    | Fetching memes from Reddit API
+`discord.js` - Core framework for bot interaction
+`day.js` - Lightweight time formatting
+`sequelize` - ORM for database handling
+`sqlite3` - Local storage of reminders, birthdays
+`chrono-node` - Natural language date parsing
+`node-fetch` - Fetching memes from Reddit API
 
