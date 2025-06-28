@@ -30,7 +30,6 @@ module.exports =
         }
         try 
         {
-            interaction.options.getSubcommand() === 'rng';            
             const firstNum = interaction.options.getInteger('first-number');
             const secondNum = interaction.options.getInteger('second-number');
             const result = Math.round(rng(firstNum, secondNum));
@@ -38,8 +37,8 @@ module.exports =
         } 
         catch (error) 
         {
-            console.error('Issue with rng command: ', error);
-            await interaction.reply({ content: 'There was a problem with rng', flags: MessageFlags.Ephemeral });
+            console.error('Error with rng command: ', error);
+            await interaction.reply({ content: 'There was a problem with rng...', flags: MessageFlags.Ephemeral });
         }
     },
 };

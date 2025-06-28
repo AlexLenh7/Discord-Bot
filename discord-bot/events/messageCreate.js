@@ -49,18 +49,21 @@ module.exports = {
             await message.channel.send(`${userBirth.tag} ${birthday[random]} `);
         }
 
+        let replyHist = 0;
+
         // checks if user replies to bot message
         if (message.reference)
         {
+            replyHist++;
             // fetches the message being replied to 
             const botReply = await message.channel.messages.fetch(message.reference.messageId);
             const userReply = message.content;
             
             // prevent double responses if message is not sent by bot
             if (botReply.author.id !== message.client.user.id) return;
-            const messages = await context(message.channel, 100);
+            const messages = await context(message.channel, replyHist);
 
-            let prompt = 'Respond to the reply in a short paragraph and use context as needed.';
+            let prompt = 'Respond to the reply in a short paragraph and use the message context as needed.';
 
             console.log(`${message.author.tag} replied to bot`);
             if (messages)

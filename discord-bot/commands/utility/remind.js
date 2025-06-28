@@ -74,8 +74,8 @@ module.exports =
         }
         catch (error)
         {
-            console.error('Issue with setting reminder ', error);
-            await interaction.reply({ content: 'There was a problem trying to set your reminder', flags: MessageFlags.Ephemeral });
+            console.error('Error with setting reminder: ', error);
+            await interaction.reply({ content: 'There was a problem trying to set your reminder...', flags: MessageFlags.Ephemeral });
         }
     },
 };

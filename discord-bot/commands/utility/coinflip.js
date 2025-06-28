@@ -5,7 +5,7 @@ module.exports =
     cooldown: 1,
     data: new SlashCommandBuilder()
         .setName('coinflip')
-        .setDescription('Flip a coin, heads or tails?'),
+        .setDescription('Flip a coin, heads or tails'),
 
     async execute(interaction)
     {
@@ -21,7 +21,6 @@ module.exports =
         
         try 
         {
-            interaction.options.getSubcommand() === 'coinflip';
             await interaction.reply(fiftyFifty());
         } 
         catch (error) 

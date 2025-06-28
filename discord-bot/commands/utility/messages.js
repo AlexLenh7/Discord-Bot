@@ -34,8 +34,8 @@ module.exports =
         }
         catch (error) 
         {
-            console.error('Issue with deleting ', error);
-            await interaction.reply({ content: 'There was a problem deleting messages', flags: MessageFlags.Ephemeral });
+            console.error('Error with message deleting: ', error);
+            await interaction.reply({ content: 'There was a problem deleting messages...', flags: MessageFlags.Ephemeral });
         }
     },
 };

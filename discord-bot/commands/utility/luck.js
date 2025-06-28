@@ -4,35 +4,23 @@ module.exports =
 {
     cooldown: 1,
     data: new SlashCommandBuilder()
-        .setName('cs-case-sim')
-        .setDescription('Simulate opening cases in CS')
-        
-        .addIntegerOption(option =>
-                    option.setName('amount-of-cases')
-                    .setDescription('Number of cases to open')
-                    .setMinValue(1)
-                    .setMaxValue(100)
-                    .setRequired(true)),
+        .setName('feeling-lucky')
+        .setDescription('Lets see if your lucky today or not'),
         
     async execute(interaction)
     {
-        // const caseGif = new EmbedBuilder()
-        //     .setImage('https://i.makeagif.com/media/7-02-2019/ewHSwm.gif')
-        //     .setColor(0x00AE86);
-            
-        // await channel.send({ embeds: [caseGif] });
-
         // cs case probabilities
         const cs2Prob = [
-            { name: '💛',  chance: 0.26 },
-            { name: '❤️',    chance: 0.64 },
-            { name: '🩷',   chance: 3.2 },
-            { name: '💜', chance: 15.98 },
-            { name: '💙',   chance: 79.92 },
+            { name: 'Buy a lottery ticket',  chance: 0.26 },
+            { name: 'Super lucky',    chance: 0.8 },
+            { name: 'Pretty lucky',   chance: 6.94 },
+            { name: 'Average', chance: 52.0 },
+            { name: 'Could be better', chance: 20 },
+            { name: 'Try again tomorrow lol',   chance: 10.0 },
         ];
 
         // function to calculate probablility
-        function caseProbability()
+        function probability()
         {
             const randomNumber = Math.random() * 100;
             let chance = 0;
@@ -49,23 +37,27 @@ module.exports =
         // cs2 gambling lol
         try 
         {
-            if (interaction.options.getSubcommand() === 'gamble')
-            {     
-                // await interaction.channel.send({ embeds: [caseGif] }); 
-                const caseAmt = interaction.options.getInteger('amount-of-cases');
-                const results = [];
-                for (let i = 0; i < caseAmt; i++)
-                {
-                    results.push(caseProbability());
-                }
-                await interaction.deferReply();
-                await interaction.editReply(`You opened ${caseAmt} case(s) and got:\n **${results.join('** **')}**`);
+            function delay(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
             }
+            const luck = probability();
+            await interaction.reply('Drum roll please...');
+            await delay(1000);
+            await interaction.editReply('In 3');
+            await delay(1000);
+            await interaction.editReply('2'); 
+            await delay(1000);
+            await interaction.editReply('1');
+            await delay(1000); 
+            await interaction.editReply(`Your luck today is...`);
+            await delay(1000);
+            await interaction.editReply(`${luck}`);
+            
         } 
         catch (error) 
         {
-            console.error('Issue with CS case simulator: ', error);
-            await interaction.reply({ content: 'There was a problem with opening your cases!', flags: MessageFlags.Ephemeral });
+            console.error('Issue with testing your luck: ', error);
+            await interaction.reply({ content: 'There was a problem with testing your luck!', flags: MessageFlags.Ephemeral });
         }
     },
 };

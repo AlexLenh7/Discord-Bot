@@ -105,7 +105,7 @@ module.exports = {
         } 
         catch (error)
         {
-            console.error('Issue with searching meme ', error);
+            console.error('Meme command error: ', error);
             await interaction.reply({ content: 'There was a problem with meme', flags: MessageFlags.Ephemeral });
         }
     },
