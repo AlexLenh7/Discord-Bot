@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const { gemini } = require('../commands/utility/gemini.js');
 const { context } = require('../commands/utility/context');
+// const { level } = require('../models/level');
 
 module.exports = {
     name: Events.MessageCreate,

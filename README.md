@@ -52,6 +52,10 @@ Set reminders that DM you at the specified time.
 - Listens for certain phrases and automatically replies.
 - When a user replies to the bot's own response, the bot will reply back powered by AI integration with dynamic context up to 100 messages.
 
+### Level Up System
+- Features custom ranks and borders for using commands.
+- Rank command to display current rank and amount of xp needed for the next rank.
+
 ## Packages Used
 - `discord.js` - Core framework for bot interaction
 - `day.js` - Lightweight time formatting
@@ -59,5 +63,7 @@ Set reminders that DM you at the specified time.
 - `sqlite3` - Local storage of reminders, birthdays
 - `chrono-node` - Natural language date parsing
 - `node-fetch` - Fetching memes from Reddit API
+- `napi-rs/canvas` - Creates images for displaying profiles
+
 
 

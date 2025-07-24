@@ -14,7 +14,7 @@ module.exports =
             { name: 'Buy a lottery ticket',  chance: 0.26 },
             { name: 'Super lucky',    chance: 0.8 },
             { name: 'Pretty lucky',   chance: 6.94 },
-            { name: 'Average', chance: 52.0 },
+            { name: 'Average', chance: 62.0 },
             { name: 'Could be better', chance: 20 },
             { name: 'Try again tomorrow lol',   chance: 10.0 },
         ];
