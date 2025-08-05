@@ -10,10 +10,10 @@ module.exports = {
                 .setName('type')
                 .setDescription('search within a specific subreddit')
                 .addChoices(
-                    { name: 'Anime memes', value: 'Animemes' },
-                    { name: 'relatable memes', value: 'me_irl' },
-                    { name: 'dank memes', value: 'dankmemes' },
-                    { name: 'General memes', value: 'memes' },
+                    { name: 'Anime', value: 'Animemes' },
+                    { name: 'Relatable', value: 'me_irl' },
+                    { name: 'Dank', value: 'dankmemes' },
+                    { name: 'General', value: 'memes' },
                 )
                 .setRequired(false))
 

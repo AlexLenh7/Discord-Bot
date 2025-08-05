@@ -54,6 +54,7 @@ for (const file of eventFiles) {
 	}
 }
 
+// 1 second interval for checking reminder time
 setInterval(async () => { 
 	try {
 		const reminders = await reminder.findAll({

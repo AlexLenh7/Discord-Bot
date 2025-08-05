@@ -37,21 +37,8 @@ module.exports =
         // cs2 gambling lol
         try 
         {
-            function delay(time) {
-                return new Promise(resolve => setTimeout(resolve, time));
-            }
             const luck = probability();
-            await interaction.reply('Drum roll please...');
-            await delay(1000);
-            await interaction.editReply('In 3');
-            await delay(1000);
-            await interaction.editReply('2'); 
-            await delay(1000);
-            await interaction.editReply('1');
-            await delay(1000); 
-            await interaction.editReply(`Your luck today is...`);
-            await delay(1000);
-            await interaction.editReply(`${luck}`);
+            await interaction.reply(`${luck}`);
             
         } 
         catch (error) 
