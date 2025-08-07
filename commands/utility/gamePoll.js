@@ -23,7 +23,7 @@ module.exports = {
             .addIntegerOption(option =>
                 option
                 .setName('players')
-                .setDescription('Number of players you would like')
+                .setDescription('Number of players you would like to play')
                 .setRequired(true))
 
             // add a time limit option to end the poll
