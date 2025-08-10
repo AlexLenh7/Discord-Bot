@@ -30,18 +30,24 @@ const rest = new REST().setToken(token);
 // and deploy your commands!
 (async () => {
 	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-		
-		// The put method is used to fully refresh all commands in the guild with the current set
-		for (const guildId of guildIds) {
-			const data = await rest.put(
-				Routes.applicationGuildCommands(clientId, guildId),
-				{ body: commands },
-			);
-			console.log(`Successfully reloaded ${data.length} application (/) commands for guild ${guildId}.`);
+		console.log('Wiping ALL global and guild commands...');
+
+        // Wipe global commands
+        await rest.put(Routes.applicationCommands(clientId), { body: [] });
+        console.log('Global commands cleared.');
+
+        // Wipe and reload each guild's commands
+        for (const guildId of guildIds) {
+            await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] });
+            console.log(`Cleared commands for guild: ${guildId}`);
+
+            // deploy updated commands
+            await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
+            console.log(`Reloaded ${commands.length} commands for guild: ${guildId}`);
         }
+
+        console.log('All commands wiped and redeployed.');
 	} catch (error) {
-		// And of course, make sure you catch and log any errors!
 		console.error(error);
 	}
 })();

@@ -2,6 +2,7 @@ const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = 
 {
+    cooldown: 10,
     data: new SlashCommandBuilder()
         .setName('message')
         .setDescription('Modify messages')

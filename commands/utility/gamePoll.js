@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, EmbedBuilder, MessageFlags, AttachmentBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const chrono = require('chrono-node');
 const path = require('path');
+const { DateTime } = require('luxon');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,6 +16,7 @@ module.exports = {
                     { name: 'Valorant', value: 'Valorant' },
                     { name: 'CS2', value: 'CS2' },
                     { name: 'Rainbow 6 Siege', value: 'Rainbow-6-Siege' },
+                    { name: 'Battlefield 6', value: 'Battlefield-6' },
                     { name: 'Party Game', value: 'Party-Game' },
                 )
                 .setRequired(true))
@@ -66,6 +68,15 @@ module.exports = {
         const dm = interaction.options.getBoolean('dm') ?? false;
         const embedPoll = new EmbedBuilder();
 
+        // custom button to cancel poll early
+        const cancel = new ButtonBuilder()
+            .setCustomId('cancel')
+            .setLabel('End Poll')
+            .setStyle(ButtonStyle.Danger);
+
+        const row = new ActionRowBuilder()
+            .addComponents(cancel);
+
         const imagePath = path.join(__dirname, '..', '..', `./imgAssets/${game}.png`);
         const attachment = new AttachmentBuilder(imagePath, { name: `${game}.png` });
 
@@ -99,59 +110,98 @@ module.exports = {
         try {
 
             // check if valid time format
-            const setTime = chrono.parseDate(time);
-            if (!setTime) {
+            const laNow = DateTime.now().setZone('America/Los_Angeles');
+            const instantDate = laNow.toJSDate();
+
+            const parsedDate = chrono.parseDate(time, { instant: instantDate }); // no timezone option here
+            if (!parsedDate) {
                 await interaction.editReply({ content: 'Invalid time format provided!', ephemeral: true });
                 return;
             }
-            
-            // check if time is in the past
-            const msUntilPollEnds = setTime.getTime() - Date.now();
+
+            // parsedDate is a JS Date in the server’s local timezone (probably UTC or something else)
+            // So create a Luxon DateTime from it **AS IF** it is in America/Los_Angeles time zone:
+            let laSetTime = DateTime.fromJSDate(parsedDate).setZone('America/Los_Angeles', { keepLocalTime: true });
+
+            // If the parsed time is before now, assume the next day
+            if (laSetTime <= laNow) {
+                laSetTime = laSetTime.plus({ days: 1 });
+            }
+
+            // Now compute milliseconds until poll ends
+            const msUntilPollEnds = laSetTime.toMillis() - laNow.toMillis();
+
             if (msUntilPollEnds <= 0) {
                 await interaction.editReply({ content: 'The specified time is in the past!', ephemeral: true });
                 return;
             }
 
-            const unixTimestamp = Math.floor(setTime.getTime() / 1000);
+            const unixTimestamp = Math.floor(laSetTime.toSeconds());
+
             embedPoll.setDescription(description += `\n\n**Time we play: <t:${unixTimestamp}:t>**\n`);
 
             // check if there is a mentionable object
             if (mention) {
-                await interaction.editReply({ content: `${mention}`, embeds: [embedPoll], files: [attachment] });
+                await interaction.editReply({ content: `${mention}`, embeds: [embedPoll], files: [attachment], components: [row], allowedMentions: { roles: [mention.id] } });
             } else {
-                await interaction.editReply({ embeds: [embedPoll], files: [attachment] });
+                await interaction.editReply({ embeds: [embedPoll], files: [attachment], components: [row] });
             }
             
             const pollMessage = await interaction.fetchReply();
             await pollMessage.react('✅'); // yes
             await pollMessage.react('❌'); // no
-            await pollMessage.react('❓'); // maybe
+            await pollMessage.react('❓'); // maybe 
             
-            setTimeout(async () => {
+            // allow interactions after message creation
+            // Shared function to end the poll (from timeout or cancel button)
+            const endPoll = async (source = 'timeout') => {
                 const yesVotes = await pollMessage.reactions.cache.get('✅')?.users.fetch();
-                // Edit embed to indicate poll is closed
+
                 const closedEmbed = EmbedBuilder.from(pollMessage.embeds[0])
-                    .setFooter({ text: 'Poll closed' })
+                    .setFooter({ text: 'Poll closed' + (source === 'button' ? ' (manually)' : '') })
                     .setColor('Red')
                     .setThumbnail(`attachment://${game}.png`);
 
-                await pollMessage.edit({ embeds: [closedEmbed] });
+                await pollMessage.edit({
+                    embeds: [closedEmbed],
+                    components: [], // Remove button
+                });
 
-                // Remove all reactions to lock further voting
                 await pollMessage.reactions.removeAll();
 
-                // check if dm is true and send dm to all users except bots 
                 if (dm) {
-                    const sendDMs = async (users) => {
-                        users?.forEach(user => {
-                            if (!user.bot) {
-                                user.send(`It's time to play **${game}**!`);
-                            }
-                        });
-                    };
-                    sendDMs(yesVotes, 'Yes');
+                    yesVotes?.forEach(user => {
+                        if (!user.bot) {
+                            user.send(`It's time to play **${game}**!`);
+                        }
+                    });
                 }
-            }, msUntilPollEnds);
+            };
+
+            // Set up the timeout
+            const timeout = setTimeout(() => endPoll('timeout'), msUntilPollEnds);
+
+            // Set up the collector for the "End Poll" button
+            const collector = pollMessage.createMessageComponentCollector({
+                componentType: 2, // Button
+                time: msUntilPollEnds,
+            });
+
+            collector.on('collect', async i => {
+                if (i.customId === 'cancel') {
+                    // Optional: check if user has permission to end the poll
+                    if (i.user.id !== interaction.user.id) {
+                        await i.reply({ content: "Only the poll creator can end it early.", ephemeral: true });
+                        return;
+                    }
+
+                    clearTimeout(timeout); // Cancel the timeout
+                    collector.stop(); // Stop collector so it doesn’t trigger twice
+                    await i.update({ content: "Poll has been manually ended.", components: [] });
+                    await endPoll('button');
+                }
+            });
+
         } catch (error) {
             console.log('Issue with setting time', error);
             await interaction.editReply({ content: 'There was an error!', flags: MessageFlags.Ephemeral });

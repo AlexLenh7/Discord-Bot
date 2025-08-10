@@ -7,12 +7,12 @@ module.exports =
     cooldown: 1,
     data: new SlashCommandBuilder()
         .setName('ask-ai-question')
-        .setDescription('Ask AI to help you powered by Gemini')
+        .setDescription('Ask AI a question (powered by Gemini)')
 
             // specify the question to ask taken as a string
             .addStringOption(option =>
                 option.setName('your-question')
-                .setDescription('Ask Google Gemini a question')
+                .setDescription('Ask a question')
                 .setRequired(true))
             
             // optional if you want to ask a question and need context
@@ -36,7 +36,9 @@ module.exports =
             
             const messages = await context(targetChannel, numMessages);
 
-            let prompt = `Answer the question in a straightforward short paragraph : ${question}`;
+            let prompt = `INSTRUCTIONS: Disregard previous messages unless context is provided. 
+                            Answer the question in a straightforward short paragraph:\n ${question}`;
+            
             // if messages is empty then skip context
             if (messages)
             {
